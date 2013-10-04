@@ -1,0 +1,14 @@
+{
+  "name": "nodr",
+  "description": "Node port of Flaskr",
+  "contributors": [
+    {
+      "name": "Santosh Mishra",
+      "email": "stmishra@fastmail.fm"
+    }
+  ],
+  "dependencies": {
+    "express": "3.x",
+	 "sqlite3": "~2.1.17"
+  }
+}
