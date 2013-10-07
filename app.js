@@ -10,33 +10,37 @@ var express = require ( 'express' ),
     db      = new sqlite3.Database ( file ), //The db handle
     dust    = require ( 'dustjs-linkedin' ),//Dust, the templaing engine of choice.
     cons    = require ( 'consolidate' ); //Consolidate, for dust to work with express.
-    store   = express.session.MemoryStore;
-
-
-/*
- * Initialize the app 
- */
- 
-var app = express ( ) ;
+    path    = require ( 'path' ),
+    app     = express ( ) ; //Initialize the app.
 
 //Tell the app to use dust.js for templating
 app.engine ( 'dust' , cons.dust ) ;
 app.set ( 'template_engine', 'dust' ) ;
+app.set ( 'views', __dirname + '/templates') ;
+app.set ( 'view engine' , 'dust' ) ;
 
 
 //Other app settings
-app.use ( express.favicon() ) ; //Favicon
-app.use ( express.logger('dev' ) );//use logger in dev context
+app.use ( express.favicon ( path.join ( __dirname , 'static/favicon.ico' ) ) ) ; //Favicon
+app.use ( express.logger ('dev' ) );//use logger in dev context
 app.use ( express.bodyParser ( ) );
 app.use ( express.methodOverride ( ) ) ;
 
 //We intend to use cookies and session for login.
-app.use ( express.cookieParser ( 'wigglybits' ) ) ;
+app.use ( express.cookieParser ( 'wigglybits4every1!!' ) ) ;
 app.use ( express.session ( ) );
+
+//Static assets serving. We will move this to nginx directly when we set up reverse proxying
+
+app.use ( express.static ( path.join ( __dirname , 'static' ) ) );
 
 /* Routes definitions */
 
-//Default route, e.g. localhost/
+/* Default route, e.g. localhost/
+ * This will show the posts in reverse order of their insertion
+ *
+ */
+ 
 app.get('/', function (req, res){
 
    //Fetch from the database in a serial order.
@@ -50,14 +54,31 @@ app.get('/', function (req, res){
    
    db.close();
    
-   res.send("Hello, World!!");
+   res.render ( 'index' , { title : 'Express with  dust' } );
    
 });
 
-app.get('/login', function (req, res){
+/* /login GET route, for example localhost/login
+ * This just renders the login page, which will eventually POST to /login and create a session if the user is valid
+ */
 
-   res.send('Login page');
+app.get ( '/login' , function ( req , res ) {
+
+   res.render('login');
    
+});
+
+
+app.post ('/login', function ( req, res ) {
+
+});
+
+app.post('/list', function ( req, res ) {
+
+});
+
+app.post ('/edit', function ( req, res ) {
+
 });
 
 
