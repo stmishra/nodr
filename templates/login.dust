@@ -1,8 +1,11 @@
 {>layout/}
 {<content}
-	<form action='/login'>
-		Username:<input type='text' name='username'/>
-		Password:<input type='password' name='password/>
-		<input type='submit'/> 
-	</form>
+<div class="container">
+  <form class="form-signin">
+    <h2 class="form-signin-heading">Please sign in</h2>
+    <input type="text" class="input-block-level" placeholder="Email address"/>
+    <input type="password" class="input-block-level" placeholder="Password"/>
+    <button class="btn btn-large btn-primary" type="submit">Sign in</button>        
+</form>
+</div>
 {/content}
