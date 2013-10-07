@@ -70,16 +70,36 @@ app.get ( '/login' , function ( req , res ) {
 
 
 app.post ('/login', function ( req, res ) {
-
+  
+   var username = req.body.username || '';
+   var password = req.body.password || '';
+   if (username === 'stmishra@fastmail.fm' && password === 'bigpassword'){
+     req.session.user = 'stmishra@fastmail.fm';
+     res.redirect('/edit');
+   } else {
+     res.send ("Not logged in");
+   }
 });
 
 app.post('/list', function ( req, res ) {
 
 });
 
-app.post ('/edit', function ( req, res ) {
-
+app.get ('/edit', restrict, function ( req, res ) {
+   console.log('Was redirected here');   res.send("Edit page, logged in. Hell yes!");
 });
+
+/*
+ * Sesion middle ware
+ */
+function restrict(req, res, next){
+ if (req.session.user){
+    next();
+ } else {
+    req.session.error  = "Access denied";
+    res.redirect('/login');
+ }
+}
 
 
 app.listen(3000);
