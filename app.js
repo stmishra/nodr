@@ -3,14 +3,14 @@
  */
 
 var express = require ( 'express' ),
+    path    = require ('path'),
     fs      = require ( 'fs' ), //fs to access our sqlite file
-    file    = 'test.db',  //DB filename. Relative path.
+    file    = path.join ( __dirname , '/test.db'),  //DB filename. Relative path.
     exists  = fs.existsSync ( file ),//Check if the db already exists.
-    sqlite3 = require ( 'sqlite3' ).verbose ( ); //The node-sqlite3 library
-    db      = new sqlite3.Database ( file ), //The db handle
+    sqlite3 = require ( 'sqlite3' ).verbose ( ), //The node-sqlite3 library
+    db      = new sqlite3.Database ( file , sqlite3.OPEN_READWRITE ), //The db handle
     dust    = require ( 'dustjs-linkedin' ),//Dust, the templaing engine of choice.
     cons    = require ( 'consolidate' ); //Consolidate, for dust to work with express.
-    path    = require ( 'path' ),
     app     = express ( ) ; //Initialize the app.
 
 //Tell the app to use dust.js for templating
@@ -41,20 +41,21 @@ app.use ( express.static ( path.join ( __dirname , 'static' ) ) );
  *
  */
  
-app.get('/', function (req, res){
+app.get ( '/', function (req, res) {
 
    //Fetch from the database in a serial order.
    // TODO : Figure out how to parallelize this.
-   
-   db.serialize(function() {
-       db.each("SELECT id ,title , post from entries ", function (err, row) {
-       console.log(row.id + ":" + row.title );
-	});
-   });
+   var result = [] , i = 0;
+
+   if ( exists ) {
+      db.all( "SELECT id, title, post FROM entries" , function ( err , row ) {
+        result[ i++ ]  = row;
+      });
+   }
    
    db.close();
    
-   res.render ( 'index' , { title : 'Express with  dust' } );
+   res.render ( 'index' , { title : 'Posts' , result : result } );
    
 });
 
@@ -67,7 +68,6 @@ app.get ( '/login' , function ( req , res ) {
    res.render('login');
    
 });
-
 
 app.post ('/login', function ( req, res ) {
   
