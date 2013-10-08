@@ -15,7 +15,9 @@ var express = require ( 'express' ),
     db      = new sqlite3.cached.Database ( file , sqlite3.OPEN_READWRITE ), //The db handle
     dust    = require ( 'dustjs-linkedin' ),//Dust, the templaing engine of choice.
     cons    = require ( 'consolidate' ); //Consolidate, for dust to work with express.
-    app     = express ( ) ; //Initialize the app.
+    app     = express ( ), //Initialize the app.
+    https   = require ('https');
+    
 
 //Tell the app to use dust.js for templating
 app.engine ( 'dust' , cons.dust ) ;
@@ -95,7 +97,7 @@ app.get ( '/logout', function ( req , res ){
 
 
 app.post ('/add', restrict, function ( req, res ){ 
-	
+
 	var title = req.body.title;
 	var text = req.body.text;
 	db.run( "INSERT INTO entries (title, post) values (?, ?)",  [title, text] );
@@ -116,7 +118,14 @@ function restrict(req, res, next){
 }
 
 
-app.listen(3000);
+
+var privateKey = fs.readFileSync('sslcert/server.key', 'utf8');
+var certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
+
+var httpsServer = https.createServer({key : privateKey, cert: certificate}, app);
+
+
+httpsServer.listen(443);
 
 //Tell the user the app has started
 console.log("App listening on port 3000");
