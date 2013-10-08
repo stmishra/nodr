@@ -3,9 +3,11 @@
   <div class="container-fluid">
 	<div class="row-fluid">
 	{#result}
+		<div class="span2">
+		</div>
 		<div class="span10">
-			<h3>{title}</h3>
-			<p>{post}</p>
+			<strong>{title}</strong>
+			<p class="text-left">{post}</p>
 		</div>
 	{/result}
 	</div>
