@@ -1,15 +1,25 @@
 {>layout/}
 {<content}
-  <div class="container-fluid">
-	<div class="row-fluid">
-	{#result}
-		<div class="span2">
-		</div>
-		<div class="span10">
-			<strong>{title}</strong>
-			<p class="text-left">{post}</p>
-		</div>
-	{/result}
+  <div class="container">
+	<div class="row">
+		{?logged_in}
+			<div class="span8">
+				 <form action="/add" method=post class="form-post">
+					  <input class="input-block-level" type=text size=30 name=title placeholder="Title">
+					  <textarea class="input-block-level" name=text rows=5 cols=40 placeholder="Text"></textarea>
+					  <button type=submit class="btn btn-large btn-primary">Share</button>
+				 </form>
+			</div>
+		 {/logged_in}
+		
+		{#result}
+			<div class="span8">
+				<div class="well">
+					<strong>{title}</strong>
+					<p class="text-left">{post}</p>
+				</div>
+			</div>
+		{/result}
 	</div>
   </div>
 {/content}

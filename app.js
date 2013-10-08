@@ -1,5 +1,9 @@
 /* Various requires.
  * express is our framework
+ 
+-TODOS:  DB connection opening should be a middleware
+- DB connection closing should also be a middleware.
+
  */
 
 var express = require ( 'express' ),
@@ -8,7 +12,7 @@ var express = require ( 'express' ),
     file    = path.join ( __dirname , '/test.db'),  //DB filename. Relative path.
     exists  = fs.existsSync ( file ),//Check if the db already exists.
     sqlite3 = require ( 'sqlite3' ).verbose ( ), //The node-sqlite3 library
-    db      = new sqlite3.Database ( file , sqlite3.OPEN_READWRITE ), //The db handle
+    db      = new sqlite3.cached.Database ( file , sqlite3.OPEN_READWRITE ), //The db handle
     dust    = require ( 'dustjs-linkedin' ),//Dust, the templaing engine of choice.
     cons    = require ( 'consolidate' ); //Consolidate, for dust to work with express.
     app     = express ( ) ; //Initialize the app.
@@ -21,7 +25,7 @@ app.set ( 'view engine' , 'dust' ) ;
 
 
 //Other app settings
-app.use ( express.favicon ( path.join ( __dirname , 'static/favicon.ico' ) ) ) ; //Favicon
+app.use ( express.favicon ( path.join ( __dirname , '/static/favicon.ico' ) ) ) ; //Favicon
 app.use ( express.logger ('dev' ) );//use logger in dev context
 app.use ( express.bodyParser ( ) );
 app.use ( express.methodOverride ( ) ) ;
@@ -41,15 +45,17 @@ app.use ( express.static ( path.join ( __dirname , 'static' ) ) );
  *
  */
  
-app.get ( '/', function (req, res) {
+app.get ( '/' , function (req, res) {
 
    //Fetch from the database in a serial order.
    // TODO : Figure out how to parallelize this.
-
+   // 
+   var logged_in = false;
+   if (req.session.user) logged_in = true;
    if ( exists ) {
        db.serialize( function () {
-          db.all( "SELECT id, title, post FROM entries" , function ( err , rows ) {
-          res.render('index' , { title : 'Posts', result: rows } );
+          db.all( "SELECT id, title, post FROM entries order by id desc" , function ( err , rows ) {
+          res.render('index' , { title : 'Posts', result: rows, logged_in: logged_in } );
           });
        });
    }
@@ -72,18 +78,29 @@ app.post ('/login', function ( req, res ) {
    var password = req.body.password || '';
    if (username === 'stmishra@fastmail.fm' && password === 'bigpassword'){
      req.session.user = 'stmishra@fastmail.fm';
-     res.redirect('/edit');
+     res.redirect('/');
    } else {
      res.send ("Not logged in");
    }
 });
 
-app.post('/list', function ( req, res ) {
+app.get ( '/logout', function ( req , res ){
+
+   req.session.destroy(function(){
+     res.redirect('/');
+   });
 
 });
 
-app.get ('/edit', restrict, function ( req, res ) {
-   console.log('Was redirected here');   res.send("Edit page, logged in. Hell yes!");
+
+
+app.post ('/add', restrict, function ( req, res ){ 
+	
+	var title = req.body.title;
+	var text = req.body.text;
+	db.run( "INSERT INTO entries (title, post) values (?, ?)",  [title, text] );
+    res.redirect('/');
+
 });
 
 /*
