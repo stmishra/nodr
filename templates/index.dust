@@ -1,6 +1,13 @@
 {>layout/}
 {<content}
-  <div class="container">
-
+  <div class="container-fluid">
+	<div class="row-fluid">
+	{#result}
+		<div class="span10">
+			<h3>{title}</h3>
+			<p>{post}</p>
+		</div>
+	{/result}
+	</div>
   </div>
 {/content}

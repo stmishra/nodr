@@ -45,18 +45,15 @@ app.get ( '/', function (req, res) {
 
    //Fetch from the database in a serial order.
    // TODO : Figure out how to parallelize this.
-   var result = [] , i = 0;
 
    if ( exists ) {
-      db.all( "SELECT id, title, post FROM entries" , function ( err , row ) {
-        result[ i++ ]  = row;
-      });
+       db.serialize( function () {
+          db.all( "SELECT id, title, post FROM entries" , function ( err , rows ) {
+          res.render('index' , { title : 'Posts', result: rows } );
+          });
+       });
    }
-   
-   db.close();
-   
-   res.render ( 'index' , { title : 'Posts' , result : result } );
-   
+
 });
 
 /* /login GET route, for example localhost/login
