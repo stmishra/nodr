@@ -94,6 +94,32 @@ app.get ( '/logout', function ( req , res ){
 
 });
 
+app.get( '/post/:id', function ( req , res ){
+
+  var logged_in = false;
+  var id = req.params.id || null;
+  if (req.session.user) logged_in = true;
+  if ( exists && id ){
+     db.serialize( function () {
+        db.get( " SELECT id, title, post from entries where id = ?", [id] , function (err , row) {
+            res.render("post",{result : row, logged_in : logged_in });
+        });
+      });
+  }
+});
+
+app.post( '/post/:id', restrict , function (req, res ){
+  var id = req.params.id || null;
+  var title = req.body.title || null;
+  var post = req.body.text || null;
+  db.serialize( function () {
+    db.run ( " UPDATE entries set title = ? , post = ?  where id = ?", [title, post, id], function (err) {
+      console.log(JSON.stringify(err));
+      res.redirect("/post/" + id);
+    });
+  });
+});
+
 
 
 app.post ('/add', restrict, function ( req, res ){ 
@@ -128,4 +154,4 @@ var httpsServer = https.createServer({key : privateKey, cert: certificate}, app)
 httpsServer.listen(443);
 
 //Tell the user the app has started
-console.log("App listening on port 3000");
+console.log("App listening on port 443");

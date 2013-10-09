@@ -3,17 +3,17 @@
   <head>
   	<title>{title}</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-  	<link rel='stylesheet' href='stylesheets/style.css' media='screen' />
-	<link rel='stylesheet' href='stylesheets/bootstrap.min.css' media='screen' />
-        <link rel='stylesheet' href='stylesheets/bootstrap-responsive.min.css' media='screen'/>
-        
-
+  	<link rel='stylesheet' href='/stylesheets/style.css' media='screen' />
+	<link rel='stylesheet' href='/stylesheets/bootstrap.min.css' media='screen' />
+        <link rel='stylesheet' href='/stylesheets/bootstrap-responsive.min.css' media='screen'/>
   </head>
   <body>
+      {>header/}
+
       {+content}
         This is the base content. If you see this, there's probably something WRONG!
       {/content}
       <script src="http://code.jquery.com/jquery.js"></script>
-      <script src="js/bootstrap.min.js"></script>
+      <script src="/js/bootstrap.min.js"></script>
   </body>
 </html>

@@ -3,22 +3,21 @@
   <div class="container">
 	<div class="row">
 		{?logged_in}
-			<div class="span8">
+			<div class="well">
 				 <form action="/add" method=post class="form-post">
-					  <input class="input-block-level" type=text size=30 name=title placeholder="Title">
-					  <textarea class="input-block-level" name=text rows=5 cols=40 placeholder="Text"></textarea>
+					  <input class="input-block-level" type=text size=30 name=title placeholder="title">
+					  <textarea class="input-block-level" name=text rows=5 cols=40 placeholder="text"></textarea>
 					  <button type=submit class="btn btn-large btn-primary">Share</button>
 				 </form>
 			</div>
 		 {/logged_in}
+
+		 {#result}
 		
-		{#result}
-			<div class="span8">
-				<div class="well">
-					<strong>{title}</strong>
+				<div class="well {@if cond="{'{$idx}' == 0}"}hero-unit{/if}">
+					<strong>{title}</strong><span class="pull-right"></small><a href=/post/{id}>Permalink</a></small></span>
 					<p class="text-left">{post}</p>
 				</div>
-			</div>
 		{/result}
 	</div>
   </div>
