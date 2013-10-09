@@ -1,0 +1,23 @@
+{>layout/}
+{<content}
+  <div class="container">
+	<div class="row">
+		{#result}
+			{?logged_in}
+			<div class="well">
+				 <form action="/post/{id}" method="post" class="form-post">
+					  <input class="input-block-level" type="text" size=30 name="title" value="{title}"/>
+					  <textarea class="input-block-level" name="text" rows="5" cols="40" >{post}</textarea>
+					  <button type=submit class="btn btn-large btn-primary">Share</button>
+				 </form>
+			</div>
+			{/logged_in}
+	
+				<div class="well hero-unit">
+					<strong>{title}</strong>
+					<p class="text-left">{post}</p>
+				</div>
+		{/result}
+	</div>
+  </div>
+{/content}
