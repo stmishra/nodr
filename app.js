@@ -52,7 +52,7 @@ app.use ( express.static ( path.join ( __dirname , 'static' ) ) );
  */
 
  
-app.get ( '/' , function (req, res) {
+app.get ( '/' , http_only, function (req, res) {
 
    //Fetch from the database in a serial order.
    // TODO : Figure out how to parallelize this.
@@ -73,13 +73,13 @@ app.get ( '/' , function (req, res) {
  * This just renders the login page, which will eventually POST to /login and create a session if the user is valid
  */
  
-app.get ( '/login' , function ( req , res ) {
+app.get ( '/login' , https_only, function ( req , res ) {
 
    res.render('login');
    
 });
 
-app.post ('/login', function ( req, res ) {
+app.post ('/login', https_only, function ( req, res ) {
   
    var username = req.body.username || '';
    var password = req.body.password || '';
@@ -99,7 +99,7 @@ app.get ( '/logout', function ( req , res ){
 
 });
 
-app.get( '/post/:id', function ( req , res ){
+app.get( '/post/:id', http_only,  function ( req , res ){
 
   var logged_in = false;
   var id = req.params.id || null;
@@ -113,7 +113,7 @@ app.get( '/post/:id', function ( req , res ){
   }
 });
 
-app.post( '/post/:id', restrict , function (req, res ){
+app.post( '/post/:id', http_only , restrict , function (req, res ){
   var id = req.params.id || null;
   var title = req.body.title || null;
   var post = req.body.text || null;
@@ -127,7 +127,7 @@ app.post( '/post/:id', restrict , function (req, res ){
 
 
 
-app.post ('/add', restrict, function ( req, res ){ 
+app.post ('/add', restrict, http_only, function ( req, res ){ 
 
 	var title = req.body.title;
 	var text = req.body.text;
@@ -146,6 +146,25 @@ function restrict(req, res, next){
     req.session.error  = "Access denied";
     res.redirect('/login');
  }
+}
+
+/*
+ * http_only middleware
+ * 
+ */
+
+function http_only (req, res, next){
+ if (req.secure) {
+   res.redirect('http://' + req.header('Host') + req.url);
+ }
+ next();
+}
+
+function https_only (req, res, next){
+ if (!req.secure) {
+   res.redirect('https://' + req.header('Host') + req.url);
+   }
+   next();
 }
 
 
