@@ -16,6 +16,8 @@ var express = require ( 'express' ),
     dust    = require ( 'dustjs-linkedin' ),//Dust, the templaing engine of choice.
     cons    = require ( 'consolidate' ); //Consolidate, for dust to work with express.
     app     = express ( ), //Initialize the app.
+    appS    = express ( ),
+    http    = require ( 'http' ),
     https   = require ('https');
     
 
@@ -36,9 +38,11 @@ app.use ( express.methodOverride ( ) ) ;
 app.use ( express.cookieParser ( 'wigglybits4every1!!' ) ) ;
 app.use ( express.session ( ) );
 
+
 //Static assets serving. We will move this to nginx directly when we set up reverse proxying
 
 app.use ( express.static ( path.join ( __dirname , 'static' ) ) );
+
 
 /* Routes definitions */
 
@@ -46,6 +50,7 @@ app.use ( express.static ( path.join ( __dirname , 'static' ) ) );
  * This will show the posts in reverse order of their insertion
  *
  */
+
  
 app.get ( '/' , function (req, res) {
 
@@ -67,7 +72,7 @@ app.get ( '/' , function (req, res) {
 /* /login GET route, for example localhost/login
  * This just renders the login page, which will eventually POST to /login and create a session if the user is valid
  */
-
+ 
 app.get ( '/login' , function ( req , res ) {
 
    res.render('login');
@@ -80,7 +85,7 @@ app.post ('/login', function ( req, res ) {
    var password = req.body.password || '';
    if (username === 'stmishra@fastmail.fm' && password === 'bigpassword'){
      req.session.user = 'stmishra@fastmail.fm';
-     res.redirect('/');
+     res.redirect('http://ka.berserker.gen.in/');
    } else {
      res.send ("Not logged in");
    }
@@ -89,7 +94,7 @@ app.post ('/login', function ( req, res ) {
 app.get ( '/logout', function ( req , res ){
 
    req.session.destroy(function(){
-     res.redirect('/');
+     res.redirect('http://ka.berserker.gen.in/');
    });
 
 });
@@ -149,9 +154,12 @@ var privateKey = fs.readFileSync('sslcert/server.key', 'utf8');
 var certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
 
 var httpsServer = https.createServer({key : privateKey, cert: certificate}, app);
+var httpServer = http.createServer( app ); 
 
 
+httpServer.listen(80);
 httpsServer.listen(443);
 
 //Tell the user the app has started
-console.log("App listening on port 443");
+console.log("Secure App listening on port 443");
+console.log(" App listening on port 80");
