@@ -61,7 +61,7 @@ app.get ( '/' , http_only, function (req, res) {
    if (req.session.user) logged_in = true;
    if ( exists ) {
        db.serialize( function () {
-          db.all( "SELECT id, title, post FROM entries order by id desc" , function ( err , rows ) {
+          db.all( "SELECT id, title, post, slug FROM entries order by id desc" , function ( err , rows ) {
           res.render('index' , { title : 'Posts', result: rows, logged_in: logged_in } );
           });
        });
@@ -99,14 +99,14 @@ app.get ( '/logout', function ( req , res ){
 
 });
 
-app.get( '/post/:id', http_only,  function ( req , res ){
+app.get( '/post/:slug', http_only,  function ( req , res ){
 
   var logged_in = false;
-  var id = req.params.id || null;
+  var slug = req.params.slug || null;
   if (req.session.user) logged_in = true;
-  if ( exists && id ){
+  if ( exists && slug ){
      db.serialize( function () {
-        db.get( " SELECT id, title, post from entries where id = ?", [id] , function (err , row) {
+        db.get( " SELECT id, title, post, slug  from entries where slug = ?", [slug] , function (err , row) {
             res.render("post",{result : row, logged_in : logged_in });
         });
       });
@@ -128,10 +128,10 @@ app.post( '/post/:id', http_only , restrict , function (req, res ){
 
 
 app.post ('/add', restrict, http_only, function ( req, res ){ 
-
 	var title = req.body.title;
+	var slug = slugify(title);
 	var text = req.body.text;
-	db.run( "INSERT INTO entries (title, post) values (?, ?)",  [title, text] );
+	db.run( "INSERT INTO entries (title, post, slug) values (?, ?, ?)",  [title, text, slug] );
     res.redirect('/');
 
 });
@@ -166,6 +166,17 @@ function https_only (req, res, next){
    }
    next();
 }
+
+function slugify(text) {
+
+   return text.toString().toLowerCase()
+          .replace(/\s+/g, '-')        // Replace spaces with -
+          .replace(/[^\w\-]+/g, '')   // Remove all non-word chars
+          .replace(/\-\-+/g, '-')      // Replace multiple - with single -
+          .replace(/^-+/, '')          // Trim - from start of text
+          .replace(/-+$/, '');         // Trim - from end of text
+}                                    
+
 
 
 

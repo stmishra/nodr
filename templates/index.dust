@@ -15,7 +15,7 @@
 		 {#result}
 		
 				<div class="well {@if cond="{'{$idx}' == 0}"}hero-unit{/if}">
-					<strong>{title}</strong><span class="pull-right"></small><a href=/post/{id}>Permalink</a></small></span>
+					<strong>{title}</strong><span class="pull-right"></small><a href=/post/{slug}>Permalink</a></small></span>
 					<p class="text-left">{post}</p>
 				</div>
 		{/result}
