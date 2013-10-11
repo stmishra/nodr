@@ -117,10 +117,11 @@ app.post( '/post/:id', http_only , restrict , function (req, res ){
   var id = req.params.id || null;
   var title = req.body.title || null;
   var post = req.body.text || null;
+  var slug = req.body.slug || null;
   db.serialize( function () {
     db.run ( " UPDATE entries set title = ? , post = ?  where id = ?", [title, post, id], function (err) {
       console.log(JSON.stringify(err));
-      res.redirect("/post/" + id);
+      res.redirect("/post/" + slug);
     });
   });
 });

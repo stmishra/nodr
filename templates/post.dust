@@ -7,6 +7,7 @@
 			<div class="well">
 				 <form action="/post/{id}" method="post" class="form-post">
 					  <input class="input-block-level" type="text" size=30 name="title" value="{title}"/>
+                                          <input type="hidden" type="text" name="slug" value="{slug}"/>
 					  <textarea class="input-block-level" name="text" rows="5" cols="40" >{post}</textarea>
 					  <button type=submit class="btn btn-large btn-primary">Share</button>
 				 </form>
