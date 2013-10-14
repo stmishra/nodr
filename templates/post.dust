@@ -13,12 +13,10 @@
 				 </form>
 			</div>
 			{/logged_in}
-	
+		{/result}	
 				<div class="well hero-unit">
-					<strong>{title}</strong>
-					<p class="text-left">{post}</p>
+					{>raw_post/}
 				</div>
-		{/result}
 	</div>
   </div>
 {/content}

@@ -1,0 +1,4 @@
+{#result}
+	<strong>{title}</strong>
+	<p class="text-left">{post}</p>
+{/result}

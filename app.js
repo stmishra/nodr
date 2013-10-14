@@ -20,10 +20,7 @@ var express = require ( 'express' ),
     http    = require ( 'http' ),
     https   = require ('https'),
     secure_r= require ('./lib/tls.js'),
-    pjax    = require ('express-pjax');
-    
-
-
+    pjax    = require ('./lib/pjax.js');
     
 
 //Tell the app to use dust.js for templating
@@ -92,10 +89,7 @@ app.get( '/post/:slug', function ( req , res ){
   if ( exists && slug ){
      db.serialize( function () {
         db.get( " SELECT id, title, post, slug  from entries where slug = ?", [slug] , function (err , row) {
-            app.locals({layout:false});
-            console.log("rendering ....");
-           
-            res.render("post", {result : row, logged_in : logged_in , skip_layout: true });
+            res.renderPjax("post", {result : row, logged_in : logged_in });
         });
       });
   }
