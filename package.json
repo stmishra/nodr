@@ -9,9 +9,11 @@
   ],
   "dependencies": {
     "express": "3.x",
-	"sqlite3": "~2.1.17",
-	"dustjs-linkedin": "*",
-	"dustjs-helpers" : "*",
-	"consolidate" : "*"
-	}
+    "sqlite3": "~2.1.17",
+    "dustjs-linkedin": "*",
+    "dustjs-helpers": "*",
+    "consolidate": "*",
+    "express-pjax": "0.0.1",
+    "underscore": "~1.5.2"
+  }
 }

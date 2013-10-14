@@ -1,4 +1,5 @@
-/* Various requires.
+/*
+* Various requires.
  * express is our framework
  
 -TODOS:  DB connection opening should be a middleware
@@ -18,7 +19,10 @@ var express = require ( 'express' ),
     app     = express ( ), //Initialize the app.
     appS    = express ( ),
     http    = require ( 'http' ),
-    https   = require ('https');
+    https   = require ('https'),
+    secure_r= require ('./lib/tls.js');
+
+
     
 
 //Tell the app to use dust.js for templating
@@ -31,20 +35,28 @@ app.set ( 'view engine' , 'dust' ) ;
 //Other app settings
 app.use ( express.favicon ( path.join ( __dirname , '/static/favicon.ico' ) ) ) ; //Favicon
 app.use ( express.logger ('dev' ) );//use logger in dev context
+
+
 app.use ( express.bodyParser ( ) );
 app.use ( express.methodOverride ( ) ) ;
+
+
 
 //We intend to use cookies and session for login.
 app.use ( express.cookieParser ( 'wigglybits4every1!!' ) ) ;
 app.use ( express.session ( ) );
 
+app.use ( secure_r () );
 
 //Static assets serving. We will move this to nginx directly when we set up reverse proxying
 
 app.use ( express.static ( path.join ( __dirname , 'static' ) ) );
 
 
+
 /* Routes definitions */
+
+/* Only http_only requests first, so we use out http_only middleware here */
 
 /* Default route, e.g. localhost/
  * This will show the posts in reverse order of their insertion
@@ -52,7 +64,7 @@ app.use ( express.static ( path.join ( __dirname , 'static' ) ) );
  */
 
  
-app.get ( '/' , http_only, function (req, res) {
+app.get ( '/' , function (req, res) {
 
    //Fetch from the database in a serial order.
    // TODO : Figure out how to parallelize this.
@@ -69,17 +81,57 @@ app.get ( '/' , http_only, function (req, res) {
 
 });
 
+app.get( '/post/:slug', function ( req , res ){
+
+  var logged_in = false;
+  var slug = req.params.slug || null;
+  if (req.session.user) logged_in = true;
+  if ( exists && slug ){
+     db.serialize( function () {
+        db.get( " SELECT id, title, post, slug  from entries where slug = ?", [slug] , function (err , row) {
+            res.render("post",{result : row, logged_in : logged_in });
+        });
+      });
+  }
+});
+
+app.post( '/post/:id', restrict , function (req, res ){
+  var id = req.params.id || null;
+  var title = req.body.title || null;
+  var post = req.body.text || null;
+  var slug = req.body.slug || null;
+  db.serialize( function () {
+    db.run ( " UPDATE entries set title = ? , post = ?  where id = ?", [title, post, id], function (err) {
+      console.log(JSON.stringify(err));
+      res.redirect("/post/" + slug);
+    });
+  });
+});
+
+
+
+app.post ('/add', restrict, function ( req, res ){ 
+   var title = req.body.title;
+   var slug = slugify(title);
+   var text = req.body.text;
+   db.run( "INSERT INTO entries (title, post, slug) values (?, ?, ?)",  [title, text, slug] );
+   res.redirect('/');
+
+});
+
+
 /* /login GET route, for example localhost/login
  * This just renders the login page, which will eventually POST to /login and create a session if the user is valid
  */
+
  
-app.get ( '/login' , https_only, function ( req , res ) {
+app.get ( '/login' , function ( req , res ) {
 
    res.render('login');
    
 });
 
-app.post ('/login', https_only, function ( req, res ) {
+app.post ('/login', function ( req, res ) {
   
    var username = req.body.username || '';
    var password = req.body.password || '';
@@ -99,43 +151,6 @@ app.get ( '/logout', function ( req , res ){
 
 });
 
-app.get( '/post/:slug', http_only,  function ( req , res ){
-
-  var logged_in = false;
-  var slug = req.params.slug || null;
-  if (req.session.user) logged_in = true;
-  if ( exists && slug ){
-     db.serialize( function () {
-        db.get( " SELECT id, title, post, slug  from entries where slug = ?", [slug] , function (err , row) {
-            res.render("post",{result : row, logged_in : logged_in });
-        });
-      });
-  }
-});
-
-app.post( '/post/:id', http_only , restrict , function (req, res ){
-  var id = req.params.id || null;
-  var title = req.body.title || null;
-  var post = req.body.text || null;
-  var slug = req.body.slug || null;
-  db.serialize( function () {
-    db.run ( " UPDATE entries set title = ? , post = ?  where id = ?", [title, post, id], function (err) {
-      console.log(JSON.stringify(err));
-      res.redirect("/post/" + slug);
-    });
-  });
-});
-
-
-
-app.post ('/add', restrict, http_only, function ( req, res ){ 
-	var title = req.body.title;
-	var slug = slugify(title);
-	var text = req.body.text;
-	db.run( "INSERT INTO entries (title, post, slug) values (?, ?, ?)",  [title, text, slug] );
-    res.redirect('/');
-
-});
 
 /*
  * Sesion middle ware
@@ -149,27 +164,7 @@ function restrict(req, res, next){
  }
 }
 
-/*
- * http_only middleware
- * 
- */
-
-function http_only (req, res, next){
- if (req.secure) {
-   res.redirect('http://' + req.header('Host') + req.url);
- }
- next();
-}
-
-function https_only (req, res, next){
- if (!req.secure) {
-   res.redirect('https://' + req.header('Host') + req.url);
-   }
-   next();
-}
-
 function slugify(text) {
-
    return text.toString().toLowerCase()
           .replace(/\s+/g, '-')        // Replace spaces with -
           .replace(/[^\w\-]+/g, '')   // Remove all non-word chars
