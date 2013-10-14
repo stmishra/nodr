@@ -17,10 +17,11 @@ var express = require ( 'express' ),
     dust    = require ( 'dustjs-linkedin' ),//Dust, the templaing engine of choice.
     cons    = require ( 'consolidate' ); //Consolidate, for dust to work with express.
     app     = express ( ), //Initialize the app.
-    appS    = express ( ),
     http    = require ( 'http' ),
     https   = require ('https'),
-    secure_r= require ('./lib/tls.js');
+    secure_r= require ('./lib/tls.js'),
+    pjax    = require ('express-pjax');
+    
 
 
     
@@ -45,6 +46,8 @@ app.use ( express.methodOverride ( ) ) ;
 //We intend to use cookies and session for login.
 app.use ( express.cookieParser ( 'wigglybits4every1!!' ) ) ;
 app.use ( express.session ( ) );
+
+app.use ( pjax ());
 
 app.use ( secure_r () );
 
@@ -89,11 +92,15 @@ app.get( '/post/:slug', function ( req , res ){
   if ( exists && slug ){
      db.serialize( function () {
         db.get( " SELECT id, title, post, slug  from entries where slug = ?", [slug] , function (err , row) {
-            res.render("post",{result : row, logged_in : logged_in });
+            app.locals({layout:false});
+            console.log("rendering ....");
+           
+            res.render("post", {result : row, logged_in : logged_in , skip_layout: true });
         });
       });
   }
 });
+
 
 app.post( '/post/:id', restrict , function (req, res ){
   var id = req.params.id || null;
