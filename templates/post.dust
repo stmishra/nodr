@@ -1,7 +1,6 @@
 {>layout/}
 {<content}
-  <div class="container">
-	<div class="row">
+         <div class="span10">
 		{#result}
 			{?logged_in}
 			<div class="well">
@@ -18,5 +17,4 @@
 					{>raw_post/}
 				</div>
 	</div>
-  </div>
 {/content}
