@@ -13,6 +13,5 @@
     "dustjs-linkedin": "*",
     "dustjs-helpers": "*",
     "consolidate": "*",
-    "underscore": "~1.5.2"
   }
 }
