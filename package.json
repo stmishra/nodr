@@ -12,6 +12,6 @@
     "sqlite3": "~2.1.17",
     "dustjs-linkedin": "*",
     "dustjs-helpers": "*",
-    "consolidate": "*",
+    "consolidate": "*"
   }
 }
