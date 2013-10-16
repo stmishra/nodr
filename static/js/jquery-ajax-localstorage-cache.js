@@ -3,8 +3,23 @@
 
 $.ajaxPrefilter( function( options, originalOptions, jqXHR ) {
 
+  //Check for localstorage
+  var storage = (function () {
+        var uid = new Date(),
+            result = false;
+        try{
+            localStorage.setItem(uid, uid);
+            result = localStorage.getItem(uid) == uid;
+            localStorage.removeItem(uid);
+            return result && localStorage;
+        } catch (e){
+            return result;
+        }
+      }());
+
+
   // Cache it ?
-  if ( !Modernizr.localstorage || !options.localCache ) return;
+  if ( !storage || !options.localCache ) return;
 
   var hourstl = options.cacheTTL || 5;
 
