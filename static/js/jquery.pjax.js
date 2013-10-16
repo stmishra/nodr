@@ -232,15 +232,15 @@ function pjax(options) {
       $.pjax.defaults.version() :
       $.pjax.defaults.version
 
-    var latestVersion = xhr.getResponseHeader('X-PJAX-Version')
+    //var latestVersion = xhr.getResponseHeader('X-PJAX-Version')
 
     var container = extractContainer(data, xhr, options)
 
     // If there is a layout version mismatch, hard load the new url
-    if (currentVersion && latestVersion && currentVersion !== latestVersion) {
-      locationReplace(container.url)
-      return
-    }
+    //if (currentVersion && latestVersion && currentVersion !== latestVersion) {
+     // locationReplace(container.url)
+     // return
+    //}
 
     // If the new response is missing a body, hard load the page
     if (!container.contents) {
@@ -619,7 +619,7 @@ function extractContainer(data, xhr, options) {
 
   // Prefer X-PJAX-URL header if it was set, otherwise fallback to
   // using the original requested url.
-  obj.url = stripPjaxParam(xhr.getResponseHeader('X-PJAX-URL') || options.requestUrl)
+  obj.url = stripPjaxParam(options.requestUrl || options.url)
 
   // Attempt to parse response html into elements
   if (/<html/i.test(data)) {

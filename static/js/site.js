@@ -1,1 +1,1 @@
-$(document).pjax('a[data-pjax]', '#pjax-container');
+$(document).pjax('a[data-pjax]', '#pjax-container',{localCache:true});
