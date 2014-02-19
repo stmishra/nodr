@@ -1,6 +1,8 @@
 {
   "name": "nodr",
   "description": "Node port of Flaskr",
+  "version" : "0.0.0.1",
+  "author" : "stmishra@fastmail.fm",
   "contributors": [
     {
       "name": "Santosh Mishra",

@@ -184,9 +184,9 @@ function slugify(text) {
 var httpServer = http.createServer( app ); 
 
 
-httpServer.listen(80);
+httpServer.listen(8083);
 //httpsServer.listen(443);
 
 //Tell the user the app has started
-console.log("Secure App listening on port 443");
-console.log(" App listening on port 80");
+//console.log("Secure App listening on port 443");
+console.log(" App listening on port 8083");
