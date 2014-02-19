@@ -46,7 +46,7 @@ app.use ( express.session ( ) );
 
 app.use ( pjax ());
 
-app.use ( secure_r () );
+//app.use ( secure_r () );
 
 //Static assets serving. We will move this to nginx directly when we set up reverse proxying
 
@@ -138,7 +138,7 @@ app.post ('/login', function ( req, res ) {
    var password = req.body.password || '';
    if (username === 'stmishra@fastmail.fm' && password === 'bigpassword'){
      req.session.user = 'stmishra@fastmail.fm';
-     res.redirect('http://ka.berserker.gen.in/');
+     res.redirect('/');
    } else {
      res.send ("Not logged in");
    }
@@ -147,7 +147,7 @@ app.post ('/login', function ( req, res ) {
 app.get ( '/logout', function ( req , res ){
 
    req.session.destroy(function(){
-     res.redirect('http://ka.berserker.gen.in/');
+     res.redirect('/');
    });
 
 });
@@ -177,15 +177,15 @@ function slugify(text) {
 
 
 
-var privateKey = fs.readFileSync('sslcert/server.key', 'utf8');
-var certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
+//var privateKey = fs.readFileSync('sslcert/server.key', 'utf8');
+//var certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
 
-var httpsServer = https.createServer({key : privateKey, cert: certificate}, app);
+//var httpsServer = https.createServer({key : privateKey, cert: certificate}, app);
 var httpServer = http.createServer( app ); 
 
 
 httpServer.listen(80);
-httpsServer.listen(443);
+//httpsServer.listen(443);
 
 //Tell the user the app has started
 console.log("Secure App listening on port 443");
