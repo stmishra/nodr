@@ -10,14 +10,23 @@
 				 </form>
 			</div>
 		    {/logged_in}
+				{#result}
+                                {@if cond="{'{$idx}' ==0}"}   
+					<script>
+						if (!models)
+						var models = new Object;
+                                                if (!models.post) models.post= [];
+						models.post[0] = new Object;
+						models.post[0].title = "{title}";
+						models.post[0].href  = "post/"+"{slug}";
+						models.post[0].post = "{post}";
+						console.log(models);
+					</script>
+				{/if}
+				{/result}
 
-		    {#result}
-				{@if cond="{'{$idx}' ==0}"}		
 				<div class="well hero-unit" id="pjax-container">
-					<strong>{title}</strong><span class="pull-right"></small><a href="/post/{slug}">Permalink</a></small></span>
-					<p class="text-left">{post}</p>
+					<img src="/img/ajax-wait.gif"/>
 				</div>
-                                {/if}
-		    {/result}
 		</div>
 {/content}

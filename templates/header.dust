@@ -10,11 +10,11 @@
           <div class="nav-collapse collapse">
             <ul class="nav nav-pills">
               <li class="">
-                <a href="/">Home</a>
+                <a href="#">Home</a>
               </li>
-	   <!--   <li class="">	
+	      <li class="">	
 		<a href="/about">About</a>
-	      </li>-->
+	      </li>
 	      <li class="pull-right">
 		{?logged_in}
 			<a href="/logout">Logout</a>
