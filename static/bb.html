@@ -1,0 +1,65 @@
+<html>
+<head>
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="http://underscorejs.org/underscore.js"></script>
+<script src='http://backbonejs.org/backbone.js'></script>
+</head>
+
+<body>
+        <a href='#one'>One</a>
+        <br/>
+        <a href='#two' >Two</a>
+        <br/>
+        <a href='#three' >Three</a>
+        <br/>
+        <a href='#go_back' >Go Back</a>
+        <br/>
+        <a href='#go_to_two' >Go To Two</a>
+</body>
+
+
+<script type='text/javascript'>
+    var AppRouter = Backbone.Router.extend({
+       routes: {
+           '':'list',
+           'one':'one',
+           'two':'two',
+           'three':'three',
+           'go_back':'go_back',
+           'go_to_two': 'go_to_two'
+           
+           
+       },
+
+       list: function() {
+           alert ('Routed to list');
+       },
+       one:function()
+       {
+           alert('Routed to one');
+       },
+       two:function()
+       {
+           alert('Routed to two');
+       },
+       three:function()
+       {
+           alert('Routed to three');
+       }
+       ,
+       go_back: function()
+       {
+           alert('Going back');
+           window.history.back();
+       },
+       go_to_two: function()
+       {
+           alert('Going to two');
+           window.history.go(-2);
+       }
+   });
+   var router = new AppRouter();
+   Backbone.history.start({pushState:false});
+   
+   </script>
+</html>

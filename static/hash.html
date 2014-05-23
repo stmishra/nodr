@@ -1,0 +1,26 @@
+<html> 
+
+<head> 
+    <script type='text/javascript'> 
+        window.onhashchange =  function(event) { alert("location: " + document.location + ",state: " + JSON.stringify(event.state)); };
+        var one = function () { window.location.hash = 'blah-one';};
+        var two = function () { window.location.hash = 'blah-two';};
+        var three = function () { window.location.hash = 'blah-two';};
+        var go_back = function () { history.back(); return false;};
+        var go_to_two = function () { history.go(2); return false; }; 
+    </script>
+</head>
+<body>
+        <a href='#' onclick=one();>One</a>
+        <br/>
+        <a href='#' onclick=two();>Two</a>
+        <br/>
+        <a href='#' onclick=three();>Three</a>
+        <br/>
+        <a href='#' onclick=go_back();>Go Back</a>
+        <br/>
+        <a href='#' onclick=go_to_two();>Go To Two</a>
+</body>
+</html>
+
+

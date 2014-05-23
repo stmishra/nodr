@@ -1,0 +1,26 @@
+<html> 
+
+<head> 
+    <script type='text/javascript'> 
+        window.onpopstate =  function(event) { alert("location: " + document.location + ",state: " + JSON.stringify(event.state)); };
+        var one = function () { history.pushState({page: 1}, "title 1", "blah-one.html"); return false; };
+        var two = function () { history.pushState({page: 2}, "title 2", "blah-two.html"); return false; };
+        var three = function () { history.replaceState({page: 3}, "title 3", "blah-three.html"); return false; };
+        var go_back = function () { history.back(); return false;};
+        var go_to_two = function () { history.go(2); return false; }; 
+    </script>
+</head>
+<body>
+        <a href='#' onclick=one();>One</a>
+        <br/>
+        <a href='#' onclick=two();>Two</a>
+        <br/>
+        <a href='#' onclick=three();>Three</a>
+        <br/>
+        <a href='#' onclick=go_back();>Go Back</a>
+        <br/>
+        <a href='#' onclick=go_to_two();>Go To Two</a>
+</body>
+</html>
+
+
